@@ -56,6 +56,7 @@ public abstract class MvpLceFragment<CV extends View, M, V extends MvpLceView<M>
   protected View loadingView;
   protected CV contentView;
   protected TextView errorView;
+  protected View errorViewContainer;
 
   @CallSuper @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -63,6 +64,10 @@ public abstract class MvpLceFragment<CV extends View, M, V extends MvpLceView<M>
     loadingView = view.findViewById(R.id.loadingView);
     contentView = (CV) view.findViewById(R.id.contentView);
     errorView = (TextView) view.findViewById(R.id.errorView);
+    errorViewContainer = view.findViewById(R.id.errorViewContainer);
+    if(errorViewContainer == null) {
+      errorViewContainer = errorView;
+    }
 
     if (loadingView == null) {
       throw new NullPointerException(
@@ -82,9 +87,9 @@ public abstract class MvpLceFragment<CV extends View, M, V extends MvpLceView<M>
               + " You have to give your error View the id R.id.errorView");
     }
 
-    errorView.setOnClickListener(new View.OnClickListener() {
+    errorViewContainer.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        onErrorViewClicked();
+        onErrorViewContainerClicked();
       }
     });
   }
@@ -102,7 +107,7 @@ public abstract class MvpLceFragment<CV extends View, M, V extends MvpLceView<M>
    * Override this method if you want to provide your own animation for showing the loading view
    */
   protected void animateLoadingViewIn() {
-    LceAnimator.showLoading(loadingView, contentView, errorView);
+    LceAnimator.showLoading(loadingView, contentView, errorViewContainer);
   }
 
   @Override public void showContent() {
@@ -113,7 +118,7 @@ public abstract class MvpLceFragment<CV extends View, M, V extends MvpLceView<M>
    * Called to animate from loading view to content view
    */
   protected void animateContentViewIn() {
-    LceAnimator.showContent(loadingView, contentView, errorView);
+    LceAnimator.showContent(loadingView, contentView, errorViewContainer);
   }
 
   /**
@@ -137,7 +142,7 @@ public abstract class MvpLceFragment<CV extends View, M, V extends MvpLceView<M>
    * Called if the error view has been clicked. To disable clicking on the errorView use
    * <code>errorView.setClickable(false)</code>
    */
-  protected void onErrorViewClicked() {
+  protected void onErrorViewContainerClicked() {
     loadData(false);
   }
 
@@ -157,7 +162,7 @@ public abstract class MvpLceFragment<CV extends View, M, V extends MvpLceView<M>
    * Animates the error view in (instead of displaying content view / loading view)
    */
   protected void animateErrorViewIn() {
-    LceAnimator.showErrorView(loadingView, contentView, errorView);
+    LceAnimator.showErrorView(loadingView, contentView, errorViewContainer);
   }
 
   @Override public void onDestroyView() {
